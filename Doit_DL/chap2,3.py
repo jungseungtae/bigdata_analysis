@@ -1,3 +1,6 @@
+
+## 선형함수
+
 from sklearn.datasets import load_diabetes
 
 diabetes = load_diabetes()
@@ -71,49 +74,87 @@ w_new = w_new + w_rate * err
 b_new = b_new + 1 * err
 # print(w_new, b_new)
 
-for x_i, y_i in zip(x, y):
-    y_hat = x_i * w + b
-    err = y_i - y_hat
-    w_rate = x_i
-    w = w + w_rate * err
-    b = b + 1 * err
+# for x_i, y_i in zip(x, y):
+#     y_hat = x_i * w + b
+#     err = y_i - y_hat
+#     w_rate = x_i
+#     w = w + w_rate * err
+#     b = b + 1 * err
 # print(w, b)
 
-plt.scatter(x, y)
-pt1 = (-0.1, -0.1 * w + b)
-pt2 = (0.15, 0.15 * w + b)
-plt.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]])
-plt.xlabel("x")
-plt.ylabel("y")
+# plt.scatter(x, y)
+# pt1 = (-0.1, -0.1 * w + b)
+# pt2 = (0.15, 0.15 * w + b)
+# plt.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]])
+# plt.xlabel("x")
+# plt.ylabel("y")
 # plt.show()
 
 ## 적합한 모델 찾기
 ## y_hat : 예측값, err = 실제 y - 예측 y, w_rate = 가중치
-for i in range(1, 100):
-    for x_i, y_i in zip(x, y):
-        y_hat = x_i * w + b
-        err = y_i - y_hat
-        w_rate = x_i
-        w = w + w_rate * err
-        b = b + 1 * err
+# for i in range(1, 100):
+#     for x_i, y_i in zip(x, y):
+#         y_hat = x_i * w + b
+#         err = y_i - y_hat
+#         w_rate = x_i
+#         w = w + w_rate * err
+#         b = b + 1 * err
         # print(x_i, y_i, y_hat, err, w_rate, w, b)
 # print(w, b)
 
 ## 반복작업 후 w,b값 적용
-plt.scatter(x, y)
-pt1 = (-0.1, -0.1 * w + b)
-pt2 = (0.15, 0.15 * w + b)
-plt.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]])
-plt.xlabel("x")
-plt.ylabel("y")
+# plt.scatter(x, y)
+# pt1 = (-0.1, -0.1 * w + b)
+# pt2 = (0.15, 0.15 * w + b)
+# plt.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]])
+# plt.xlabel("x")
+# plt.ylabel("y")
 # plt.show()
 
 ## 모델로 예측하기(x_new를 입력하였을 때 y값을 예측)
-x_new = 0.18
-y_pred = x_new * w + b
+# x_new = 0.18
+# y_pred = x_new * w + b
+#
+# plt.scatter(x, y)
+# plt.scatter(x_new, y_pred)
+# plt.xlabel('x')
+# plt.ylabel('y')
+# plt.show()
+
+
+class Neuron:
+
+    def __init__(self):
+        self.w = 1.0  # 가중치
+        self.b = 1.0  # 절편
+
+    def forpass(self, x):
+        y_hat = x * self.w + self.b
+        return y_hat
+
+    def backprop(self, x, err):
+        w_grad = x * err
+        b_grad = 1 * err
+        return w_grad, b_grad
+
+    def fit(self, x, y, epochs=100):
+
+        for i in range(epochs):
+            for x_i, y_i in zip(x, y):
+                y_hat = self.forpass(x_i)
+                err = -(y_i - y_hat)
+                w_grad, b_grad = self.backprop(x_i, err)
+                self.w -= w_grad
+                self.b -= b_grad
+
+
+neuron = Neuron()
+neuron.fit(x, y)
 
 plt.scatter(x, y)
-plt.scatter(x_new, y_pred)
+pt1 = (-0.1, -0.1 * neuron.w + neuron.b)
+pt2 = (0.15, 0.15 * neuron.w + neuron.b)
+plt.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]])
 plt.xlabel('x')
 plt.ylabel('y')
-# plt.show()
+plt.show()

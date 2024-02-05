@@ -171,75 +171,106 @@ file_path = r'C:\Users\jstco\Downloads\6768\csv'
 # # print(pca.explained_variance_ratio_)
 
 ## 4. 결측치 처리
-df = pd.read_csv(file_path + '/df_sample.csv')
-# print(df.info())
-
-x = [14, 15, 13, 14, None, None, 19, 11, 12, 18]
-df['토론'] = x
-# print(df.info())
-
-df = pd.read_csv(file_path + '/titanic.csv')
-# print(df.isnull().head())
-# print(df.isnull().sum())
-
-# 결측치 제거
-df_1 = df.dropna(axis = 0)
-# print(df_1.isnull().sum().sum())
-# print(df_1.shape)
-
-# 결측치를 평균으로 대체
-# print(df['Age'].isnull().sum())
-age_mean = df['Age'].mean()
-df['Age'].fillna(age_mean, inplace = True)
-# print(df['Age'].isnull().sum())
-
-# 최빈값으로 대체
-from scipy.stats import mode
-
-# print(df['Embarked'].isnull().sum())
-embarked_mode = df['Embarked'].mode()
-
-df['Embarked'].fillna(embarked_mode[0], inplace = True)
-# print(df['Embarked'].isnull().sum())
-
-df['Embarked'].ffill(inplace = True)
-
-# print(df.groupby('Sex')['Age'].mean())
-# print(df.groupby('Pclass')['Age'].mean())
-
-df['Age'].fillna(df.groupby('Pclass')['Age'].transform('mean'), inplace = True)
-# print(df.tail())
-
-from math import sqrt
-import numpy as np
+# df = pd.read_csv(file_path + '/df_sample.csv')
+# # print(df.info())
 #
-# numbers = [310, 295, 298, 302, 305, 285, 300, 311, 301, 294]
-numbers = [7.1, 7, 7, 7.1, 6.8, 7.4, 6.8, 7.2]
+# x = [14, 15, 13, 14, None, None, 19, 11, 12, 18]
+# df['토론'] = x
+# # print(df.info())
 #
-sample_mean = sum(numbers) / len(numbers)
-print(sample_mean)
-standard_error = sqrt(np.sum((np.array(numbers) - sample_mean) ** 2) / (len(numbers) - 1))
+# df = pd.read_csv(file_path + '/titanic.csv')
+# # print(df.isnull().head())
+# # print(df.isnull().sum())
 #
-# print(sqrt(np.sum((np.array(numbers) - sample_mean) ** 2) / (len(numbers) - 1)))
+# # 결측치 제거
+# df_1 = df.dropna(axis = 0)
+# # print(df_1.isnull().sum().sum())
+# # print(df_1.shape)
 #
-# for i in range(len(numbers)):
-#     print((np.array(numbers[i]) - sample_mean))
-#     print((np.array(numbers[i]) - sample_mean) ** 2)
+# # 결측치를 평균으로 대체
+# # print(df['Age'].isnull().sum())
+# age_mean = df['Age'].mean()
+# df['Age'].fillna(age_mean, inplace = True)
+# # print(df['Age'].isnull().sum())
+#
+# # 최빈값으로 대체
+# from scipy.stats import mode
+#
+# # print(df['Embarked'].isnull().sum())
+# embarked_mode = df['Embarked'].mode()
+#
+# df['Embarked'].fillna(embarked_mode[0], inplace = True)
+# # print(df['Embarked'].isnull().sum())
+#
+# df['Embarked'].ffill(inplace = True)
+#
+# # print(df.groupby('Sex')['Age'].mean())
+# # print(df.groupby('Pclass')['Age'].mean())
+#
+# df['Age'].fillna(df.groupby('Pclass')['Age'].transform('mean'), inplace = True)
+# # print(df.tail())
 
-print("표본평균 :", sample_mean)
-print("표준오차 :", standard_error)
+############################
 
-# import numpy as np
+### 5. 이상치(Outlier)처리 ###
+
+############################
+
+# data = 10 * np.random.randn(200) + 50
+# df = pd.DataFrame({'value': data})
 #
-# numbers = [310, 295, 298, 302, 305, 285, 300, 311, 301, 294]
+# df.loc[201] = 2
+# df.loc[202] = 100
+# df.loc[203] = 10
+# df.loc[204] = 110
+
+# plt.hist(df['value'], bins = 20, rwidth = 0.8)
+# plt.show()
+
+# plt.boxplot(df['value'])
+# plt.show()
+
+
+# Q1 = df["value"].quantile(.25)   # 1사분위수
+# Q2 = df["value"].quantile(.5)   # 1사분위수
+# Q3 = df["value"].quantile(.75)   # 1사분위수
+# IQR = Q3 - Q1
+
+# print(Q1, Q2, Q3, IQR)
+
+# Q1 = df["value"].describe()['25%']
+# Q2 = df["value"].describe()['50%']
+# Q3 = df["value"].describe()['75%']
+# IQR = Q3 - Q1
 #
-# # 표본평균
-# mean = np.mean(numbers)
+# print(Q1, Q2, Q3, IQR)
+
+# condition = df['value'] > (Q3 + IQR * 1.5)
+# upperOutlier = df[condition]
 #
-# # 표본분산
-# std = np.std(numbers, ddof=1)
+# condition = df['value'] < (Q1 - IQR * 1.5)
+# lowerOutlier = df[condition]
+
+# print(upperOutlier)
+# print(lowerOutlier)
+
+
+############################
+
+### 6. 평활화(Smoothing) ###
+
+############################
+
+df = pd.read_csv(file_path + '/lynx.csv')
+# print(df.head())
+# print(df.describe())
+
+# df['sma'] = df['value'].rolling(10).mean()
+# plt.plot(df['value'])
+# plt.plot(df['sma'])
+
+# df['ewm'] = df['value'].ewm(10).mean()
+# plt.plot(df['value'])
+# plt.plot(df['ewm'])
 #
-# # 표본오차
-# sem = std / np.sqrt(len(numbers) - 1)
-#
-# print(mean, sem)
+# plt.show()
