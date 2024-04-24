@@ -4,6 +4,7 @@ class DataAnalyzer:
     def __init__(self, data):
         self.data = data
 
+    ## 데이터탐색
     def summarize_basic(self):
 
         methods = ['info', 'describe', 'head']
@@ -23,6 +24,7 @@ class DataAnalyzer:
         print(self.data.isnull().sum())
 
 
+    # 데이터 평균('집계기준', '집계값)
     def groupby_means(self, criteria, value):
         print(self.data.groupby(criteria)[value].mean())
 
