@@ -14,6 +14,8 @@ analysis = DataAnalyzer(wine)
 data = wine[['alcohol', 'sugar', 'pH']].to_numpy()
 target = wine['class'].to_numpy()
 
+train_col = wine[['alcohol', 'sugar', 'pH']]
+
 ## 데이터 분리
 from sklearn.model_selection import train_test_split
 
@@ -29,6 +31,10 @@ ss.fit(train_input)
 
 train_scaled = ss.transform(train_input)
 test_scaled = ss.transform(test_input)
+
+# 표준화 후 데이터값
+# train_scaled = pd.DataFrame(train_scaled, columns = train_col.columns)
+# print(train_scaled.head())
 
 ## 로지스틱 회귀분류
 from sklearn.linear_model import LogisticRegression
@@ -47,11 +53,11 @@ from sklearn.linear_model import LogisticRegression
 ## 결정트리
 from sklearn.tree import DecisionTreeClassifier
 
-# dt = DecisionTreeClassifier(random_state = 42)
-# dt.fit(train_scaled, train_target)
+dt = DecisionTreeClassifier(random_state = 42)
+dt.fit(train_scaled, train_target)
 
-# print('DecisionTreeClassifier train', dt.score(train_scaled, train_target))
-# print('DecisionTreeClassifier test', dt.score(test_scaled, test_target))
+# print('의사결정나무 train score : ', dt.score(train_scaled, train_target))
+# print('의사결정나무 test score : ', dt.score(test_scaled, test_target))
 
 
 ## 결정트리 plot
@@ -93,8 +99,8 @@ sub_input, val_input, sub_target, val_target = train_test_split(
 )
 # print(sub_input.shape, val_input.shape)
 
-dt = DecisionTreeClassifier(random_state = 42)
-dt.fit(sub_input, sub_target)
+# dt = DecisionTreeClassifier(random_state = 42)
+# dt.fit(sub_input, sub_target)
 
 ## 검증세트 score
 # print(dt.score(sub_input, sub_target))
@@ -181,17 +187,19 @@ from sklearn.model_selection import RandomizedSearchCV
 
 from sklearn.ensemble import RandomForestClassifier
 
-# rf = RandomForestClassifier(n_jobs = -1, random_state = 42)
-# scores = cross_validate(rf, train_input, train_target, return_train_score = True, n_jobs = -1)
-#
-# print(np.mean(scores['train_score']), np.mean(scores['test_score']))
-#
-# rf.fit(train_input, train_target)
-# print(rf.feature_importances_)
+rf = RandomForestClassifier(n_jobs = -1, random_state = 42)
+scores = cross_validate(rf, train_input, train_target, return_train_score = True, n_jobs = -1)
+
+print(scores)
+
+print(np.mean(scores['train_score']), np.mean(scores['test_score']))
+
+rf.fit(train_input, train_target)
+print(rf.feature_importances_)
 
 ## Out of barge score : 추출 후 남은 데이터로 계산하기
-# rf = RandomForestClassifier(oob_score = True, n_jobs = -1, random_state = 42)
-# rf.fit(train_input, train_target)
+rf = RandomForestClassifier(oob_score = True, n_jobs = -1, random_state = 42)
+rf.fit(train_input, train_target)
 # print(rf.oob_score_)
 
 ## 엑스트라트리
